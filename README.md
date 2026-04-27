@@ -2,6 +2,9 @@
 
 A modern, website-style record list component purpose-built for Salesforce **Experience Cloud** sites. Replaces the repurposed internal Lightning record list with a design paradigm that feels native to external-facing web applications — clean stat cards, color-coded status/priority pills, tab filtering, debounced search, and client-side pagination.
 
+<img width="1916" height="995" alt="image" src="https://github.com/user-attachments/assets/e73cc2f3-a8f5-4afa-85fe-b830c816e874" />
+
+
 ---
 
 ## Table of Contents
