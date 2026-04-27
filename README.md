@@ -264,7 +264,7 @@ Tabs are auto-generated from the same aggregate data that populates the stat car
 
 ## Search
 
-The search input filters records by the `Name` field (or the field identified as `nameField`). A 350 ms debounce prevents excessive wire re-executions while the user is typing.
+The search input filters records using the field configured as **Name / Title Field** (`nameField`) — for example `CaseNumber` on Case, `Subject` on Task, or `Name` on objects that have it. A 350 ms debounce prevents excessive wire re-executions while the user is typing.
 
 - Press **Escape** to clear the search term instantly
 - Search resets to page 1 automatically
