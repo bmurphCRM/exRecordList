@@ -2,9 +2,6 @@
 
 A modern, website-style record list component purpose-built for Salesforce **Experience Cloud** sites. Replaces the repurposed internal Lightning record list with a design paradigm that feels native to external-facing web applications — clean stat cards, color-coded status/priority pills, tab filtering, debounced search, and client-side pagination.
 
-<img width="1916" height="995" alt="image" src="https://github.com/user-attachments/assets/e73cc2f3-a8f5-4afa-85fe-b830c816e874" />
-
-
 ---
 
 ## Table of Contents
@@ -40,9 +37,11 @@ A modern, website-style record list component purpose-built for Salesforce **Exp
 | Any-object support | Cases, applications, payments, work orders, custom objects — any object accessible to the running user |
 | Dynamic columns | Admin specifies field API names as a comma-separated list; columns render automatically |
 | Colored pills | Status and Priority fields render as colored pill badges — 7 color variants, auto-mapped from field values |
-| Stat cards | KPI cards at the top summarize record counts by `filterField` value with sparkline graphics |
+| Stat cards (toggleable) | KPI cards summarize record counts by `filterField` value with sparkline graphics — toggled on/off via checkbox |
+| Configurable card icons | Each stat card can display a Lightning Design System icon specified by the admin |
+| Configurable title/subtitle | Admin sets a custom heading and smaller descriptive subtitle displayed above the list |
 | Tab filtering | Tabs auto-generated from the same field as the stat cards; clicking a tab or card filters the list |
-| Debounced search | Search box with 350 ms debounce filters by record name |
+| Debounced search | Search box with 350 ms debounce filters against the configured `nameField` |
 | Pagination | Server-side pagination with a sliding page number window |
 | Light + dark theme | Two built-in color modes wired to DXP design tokens |
 | Experience Builder | All options configurable via drag-and-drop property panel — no code changes needed |
@@ -190,15 +189,27 @@ All properties are set in the Experience Builder property panel when the compone
 | **Priority Field API Name** | String | No | *(blank)* | Field whose values receive colored priority pills. Leave blank to hide. |
 | **Filter / Tab Field** | String | No | `Status` | Field used to build stat cards and filter tabs |
 
+### Title & Subtitle
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| **List Title** | String | `Records` | Main heading displayed at the top of the component (e.g. "My Cases", "Payment History") |
+| **Subtitle** | String | *(blank)* | Smaller descriptive text shown directly below the title in a lighter, smaller font (e.g. "View and manage your open cases") |
+
+### Metric Cards
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| **Show Metric Cards** | Boolean | `true` | Toggles the entire KPI stat cards row on or off. Uncheck to hide the cards and show only the table. |
+| **Metric Card Icons** | String | *(blank)* | Comma-separated Lightning Design System icon names — one per stat card in display order. Example: `standard:case,utility:clock,action:approval,standard:task`. Browse all available icons at [lightningdesignsystem.com/icons](https://www.lightningdesignsystem.com/icons/). Cards without a corresponding icon show label + count only. |
+
 ### Display
 
 | Property | Type | Default | Description |
 |---|---|---|---|
-| **List Title** | String | `Records` | Page-level heading |
-| **Subtitle** | String | *(blank)* | Optional descriptive text below the title |
 | **Color Theme** | Picklist | `light` | `light` or `dark` |
-| **Show Search Bar** | Boolean | `false` | Renders the search input in the toolbar |
-| **Show Row Checkboxes** | Boolean | `false` | Renders a checkbox column for row selection |
+| **Show Search Bar** | Boolean | `true` | Renders the search input in the toolbar |
+| **Show Row Checkboxes** | Boolean | `true` | Renders a checkbox column for row selection |
 | **Rows per Page** | Integer | `10` | Page size — min 5, max 100 |
 
 ### Create Button
@@ -220,14 +231,40 @@ All properties are set in the Experience Builder property panel when the compone
 
 Stat cards are automatically built from the `filterField` property. The controller runs a `GROUP BY` aggregate query and returns up to 6 value-level counts plus an "All Records" total.
 
+### Visibility
+
+The stat card row is controlled by the **Show Metric Cards** checkbox in Experience Builder. When unchecked, the entire row is removed from the DOM — no empty space, no placeholders. Even when enabled, the row is hidden if `filterField` is blank or the aggregate returns no data.
+
+### Card anatomy
+
 Each card displays:
+- An optional **Lightning Design System icon** (configured via `statCardIcons`)
 - A **label** (the field value, e.g. "New", "Closed", "Fulfilled")
 - A **count** of matching records
 - A **sparkline** SVG in one of four accent colors (blue, orange, purple, green)
 
-Clicking a stat card sets the active filter to that value, which simultaneously highlights the matching tab and reloads the table.
+### Configuring icons
 
-The stat card row is hidden entirely when `filterField` is blank or when the aggregate returns no data.
+Set the **Metric Card Icons** property to a comma-separated list of LDS icon names. Icons are assigned to cards in order (first icon → first card, second icon → second card, etc.).
+
+**Example:**
+```
+standard:case,utility:clock,standard:task,action:approval,utility:warning,standard:work_order
+```
+
+Icon categories you can use:
+- `standard:*` — colored circular icons (e.g. `standard:case`, `standard:contact`)
+- `utility:*` — monochrome line icons (e.g. `utility:clock`, `utility:warning`)
+- `action:*` — action icons (e.g. `action:approval`, `action:new_case`)
+- `custom:*` — custom icons (e.g. `custom:custom1`)
+
+Browse all icons: [lightningdesignsystem.com/icons](https://www.lightningdesignsystem.com/icons/)
+
+If fewer icons are provided than cards exist, the remaining cards display without an icon. If more icons are provided than cards, the extras are ignored.
+
+### Interaction
+
+Clicking a stat card sets the active filter to that value, which simultaneously highlights the matching tab and reloads the table.
 
 ---
 
@@ -390,12 +427,16 @@ sf project deploy start \
 3. In the **Components** panel, find **Modern Record List**.
 4. Drag it onto the page canvas.
 5. In the property panel on the right, configure:
+   - **List Title** — e.g. `My Cases`
+   - **Subtitle** — e.g. `View and manage your open support cases`
    - **Object API Name** — e.g. `Case`
    - **Display Fields** — e.g. `CaseNumber,Subject,Status,Priority`
+   - **Name / Title Field** — e.g. `CaseNumber`
    - **Status Field API Name** — e.g. `Status`
    - **Priority Field API Name** — e.g. `Priority` (optional)
    - **Filter / Tab Field** — e.g. `Status`
-   - **List Title** — e.g. `My Cases`
+   - **Show Metric Cards** — check to display KPI summary row
+   - **Metric Card Icons** — e.g. `standard:case,utility:clock,standard:task,action:approval`
 6. Click **Publish**.
 
 ### Example configurations
@@ -404,13 +445,16 @@ sf project deploy start \
 
 | Property | Value |
 |---|---|
+| List Title | `My Cases` |
+| Subtitle | `View and manage your open support cases` |
 | Object API Name | `Case` |
 | Display Fields | `CaseNumber,Subject,Status,Priority` |
 | Name / Title Field | `CaseNumber` |
 | Status Field API Name | `Status` |
 | Priority Field API Name | `Priority` |
 | Filter / Tab Field | `Status` |
-| List Title | `My Cases` |
+| Show Metric Cards | ✓ |
+| Metric Card Icons | `standard:case,utility:clock,standard:task,action:approval,utility:warning,utility:priority` |
 | Show Search Bar | ✓ |
 | Show Create Button | ✓ |
 | Create Button Label | `Open New Case` |
@@ -419,23 +463,29 @@ sf project deploy start \
 
 | Property | Value |
 |---|---|
+| List Title | `Payment History` |
+| Subtitle | `Track all your payments and balances` |
 | Object API Name | `Payment__c` |
 | Display Fields | `Name,Amount__c,Due_Date__c,Status__c` |
 | Status Field API Name | `Status__c` |
 | Filter / Tab Field | `Status__c` |
-| List Title | `Payment History` |
+| Show Metric Cards | ✓ |
+| Metric Card Icons | `standard:currency,utility:money,utility:date_time,action:approval` |
 | Rows per Page | `20` |
 
 **Permit/application list for a government portal:**
 
 | Property | Value |
 |---|---|
+| List Title | `My Applications` |
+| Subtitle | `Track the status of your submitted applications` |
 | Object API Name | `IndividualApplication__c` |
 | Display Fields | `Name,Application_Type__c,Status__c,Priority__c,Submitted_Date__c` |
 | Status Field API Name | `Status__c` |
 | Priority Field API Name | `Priority__c` |
 | Filter / Tab Field | `Status__c` |
-| List Title | `My Applications` |
+| Show Metric Cards | ✓ |
+| Metric Card Icons | `standard:document,utility:checkin,utility:clock,action:approval` |
 | Theme | `light` |
 | Record Detail Page Name | `application-detail` |
 
@@ -464,10 +514,3 @@ The component works against any standard or custom object accessible to the runn
 - **Stat card count:** Up to 6 distinct `filterField` values are returned by the aggregate query. Objects with more than 6 distinct values will show only the top 6 by record count plus the "All" total.
 - **`OFFSET` governor limit:** Salesforce SOQL does not permit `OFFSET` greater than 2,000. At 10 rows per page this is page 200; at 20 rows per page this is page 100. For very large datasets consider adding a date or ID-based range filter rather than deep pagination.
 - **Guest users:** Guest user access requires that the queried object is accessible via the guest user profile and that the Apex class is granted access via the Experience Cloud site's guest user profile. The component does not handle unauthenticated access automatically.
-
----
-
-**Documentation Version**: 1.0  
-**Last Updated**: April 27, 2026  
-**Component Version**: 1.0  
-**Author**: Brian Murphy, b.murphy@salesforce.com
