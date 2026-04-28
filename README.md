@@ -1,7 +1,10 @@
 # exRecordList — Modern Record List for Experience Cloud
 
-A modern, website-style record list component purpose-built for Salesforce **Experience Cloud** sites. Replaces the repurposed internal Lightning record list with a design paradigm that feels native to external-facing web applications — clean stat cards, color-coded status/priority pills, tab filtering, debounced search, and client-side pagination.
+A modern, website-style record list component purpose-built for Salesforce **Experience Cloud** sites. Replaces the repurposed internal Lightning record list with a design paradigm that feels native to external-facing web applications — clean stat cards, color-coded status/priority pills, tab filtering, debounced search, and client-side pagination.<br><br>
+<img width="1727" height="876" alt="image" src="https://github.com/user-attachments/assets/7767fe3b-ad94-4310-90fc-e309dca9c596" /><br><br>
+
 <img width="738" height="778" alt="image" src="https://github.com/user-attachments/assets/d8983b20-31f6-4c2c-bf7c-505fc59c28b1" />
+
 
 
 ---
