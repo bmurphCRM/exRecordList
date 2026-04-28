@@ -464,3 +464,10 @@ The component works against any standard or custom object accessible to the runn
 - **Stat card count:** Up to 6 distinct `filterField` values are returned by the aggregate query. Objects with more than 6 distinct values will show only the top 6 by record count plus the "All" total.
 - **`OFFSET` governor limit:** Salesforce SOQL does not permit `OFFSET` greater than 2,000. At 10 rows per page this is page 200; at 20 rows per page this is page 100. For very large datasets consider adding a date or ID-based range filter rather than deep pagination.
 - **Guest users:** Guest user access requires that the queried object is accessible via the guest user profile and that the Apex class is granted access via the Experience Cloud site's guest user profile. The component does not handle unauthenticated access automatically.
+
+---
+
+**Documentation Version**: 1.0  
+**Last Updated**: April 27, 2026  
+**Component Version**: 1.0  
+**Author**: Brian Murphy, b.murphy@salesforce.com
